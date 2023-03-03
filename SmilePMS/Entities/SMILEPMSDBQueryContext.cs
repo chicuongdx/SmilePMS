@@ -18,6 +18,9 @@ namespace SmilePMS.Entities
 
         public virtual DbSet<ReservationDetail> ReservationDetails { get; set; } = null!;
         public virtual DbSet<ReservationGuest> ReservationGuests { get; set; } = null!;
+        public virtual DbSet<RoomInfo> RoomInfos { get; set; } = null!;
+        public virtual DbSet<RoomType> RoomTypes { get; set; } = null!;
+        public virtual DbSet<TransactionItem> TransactionItems { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,7 +36,7 @@ namespace SmilePMS.Entities
             modelBuilder.Entity<ReservationDetail>(entity =>
             {
                 entity.HasKey(e => e.FolioNum)
-                    .HasName("PK__Reservat__E327F24401A7A4AD");
+                    .HasName("PK__Reservat__E327F2449417C811");
 
                 entity.ToTable("ReservationDetail");
 
@@ -61,19 +64,11 @@ namespace SmilePMS.Entities
 
                 entity.Property(e => e.Email).HasMaxLength(100);
 
-                entity.Property(e => e.FolioStatus)
-                    .HasMaxLength(1)
-                    .IsFixedLength();
-
                 entity.Property(e => e.IncludeBf).HasColumnName("IncludeBF");
 
                 entity.Property(e => e.NumEbd).HasColumnName("NumEBD");
 
                 entity.Property(e => e.Phone).HasMaxLength(20);
-
-                entity.Property(e => e.Posted)
-                    .HasMaxLength(1)
-                    .IsFixedLength();
 
                 entity.Property(e => e.RateGuestCard).HasColumnType("money");
 
@@ -101,12 +96,17 @@ namespace SmilePMS.Entities
                 entity.Property(e => e.TotalBalance).HasColumnType("money");
 
                 entity.Property(e => e.TotalPay).HasColumnType("money");
+
+                entity.HasOne(d => d.RoomTypeCodeNavigation)
+                    .WithMany(p => p.ReservationDetails)
+                    .HasForeignKey(d => d.RoomTypeCode)
+                    .HasConstraintName("FK__Reservati__RoomT__25518C17");
             });
 
             modelBuilder.Entity<ReservationGuest>(entity =>
             {
                 entity.HasKey(e => e.IdAddition)
-                    .HasName("PK__Reservat__A527AEFC10DE2C48");
+                    .HasName("PK__Reservat__A527AEFC50D9B9B1");
 
                 entity.ToTable("ReservationGuest");
 
@@ -116,10 +116,6 @@ namespace SmilePMS.Entities
                     .IsFixedLength();
 
                 entity.Property(e => e.Address).HasMaxLength(200);
-
-                entity.Property(e => e.AdtStatus)
-                    .HasMaxLength(1)
-                    .IsFixedLength();
 
                 entity.Property(e => e.BirthDate).HasColumnType("date");
 
@@ -178,7 +174,62 @@ namespace SmilePMS.Entities
                     .WithMany(p => p.ReservationGuests)
                     .HasForeignKey(d => d.FolioNum)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ReservationGuest_ReservationDetail");
+                    .HasConstraintName("FK__Reservati__Folio__282DF8C2");
+            });
+
+            modelBuilder.Entity<RoomInfo>(entity =>
+            {
+                entity.HasKey(e => e.RoomCode)
+                    .HasName("PK__RoomInfo__4F9D52303DD1E6E4");
+
+                entity.ToTable("RoomInfo");
+
+                entity.Property(e => e.RoomCode).ValueGeneratedNever();
+
+                entity.Property(e => e.Description).HasMaxLength(100);
+
+                entity.Property(e => e.RoomTypeCode)
+                    .HasMaxLength(5)
+                    .IsFixedLength();
+
+                entity.HasOne(d => d.RoomTypeCodeNavigation)
+                    .WithMany(p => p.RoomInfos)
+                    .HasForeignKey(d => d.RoomTypeCode)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__RoomInfo__RoomTy__22751F6C");
+            });
+
+            modelBuilder.Entity<RoomType>(entity =>
+            {
+                entity.HasKey(e => e.RoomTypeCode)
+                    .HasName("PK__RoomType__F06AB9520108AFEA");
+
+                entity.ToTable("RoomType");
+
+                entity.Property(e => e.RoomTypeCode)
+                    .HasMaxLength(5)
+                    .IsFixedLength();
+
+                entity.Property(e => e.Description).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<TransactionItem>(entity =>
+            {
+                entity.HasKey(e => e.Icode)
+                    .HasName("PK__Transact__A8798331AE05A547");
+
+                entity.ToTable("TransactionItem");
+
+                entity.Property(e => e.Icode)
+                    .HasMaxLength(10)
+                    .HasColumnName("ICode")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Description).HasMaxLength(100);
+
+                entity.Property(e => e.Price).HasColumnType("money");
+
+                entity.Property(e => e.Qty).HasColumnName("QTY");
             });
 
             OnModelCreatingPartial(modelBuilder);

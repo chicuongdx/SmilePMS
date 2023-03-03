@@ -26,7 +26,7 @@ namespace SmilePMS.Entities
         public string? CardNumber { get; set; }
         public string? GuestSn { get; set; }
         public bool? IsChild { get; set; }
-        public string? AdtStatus { get; set; }
+        public int? AdtStatus { get; set; }
         public string? NationalCode { get; set; }
         public string? Language { get; set; }
         public bool? IsAutoRes { get; set; }

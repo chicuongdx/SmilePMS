@@ -15,8 +15,8 @@ namespace SmilePMS.Entities
         public string? BookerName { get; set; }
         public DateTime? ArivalDate { get; set; }
         public DateTime? DepartureDate { get; set; }
-        public string? FolioStatus { get; set; }
-        public string? Posted { get; set; }
+        public int? FolioStatus { get; set; }
+        public int? Posted { get; set; }
         public string? RoomTypeCode { get; set; }
         public string? RoomCode { get; set; }
         public DateTime? ReservationTime { get; set; }
@@ -38,6 +38,7 @@ namespace SmilePMS.Entities
         public string? Taname { get; set; }
         public decimal? RateGuestCard { get; set; }
 
+        public virtual RoomType? RoomTypeCodeNavigation { get; set; }
         public virtual ICollection<ReservationGuest> ReservationGuests { get; set; }
     }
 }
